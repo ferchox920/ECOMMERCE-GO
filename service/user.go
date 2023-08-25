@@ -8,6 +8,7 @@ import (
 
 	"github.com/ferchox920/ecommerce-go/models"
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -30,20 +31,30 @@ func (userService *UserService) CreateUser(user *models.User) error {
 		return err
 	}
 
+	// Verificar si el email ya está registrado
+	existingUser := &models.User{}
+	err := collection.FindOne(context.Background(), bson.M{"email": user.Email}).Decode(existingUser)
+	if err == nil {
+		return errors.New("email already exists")
+	} else if err != mongo.ErrNoDocuments {
+		log.Println("error checking existing email:", err)
+		return err
+	}
+
 	id := uuid.New().String()
 	user.ID = id
 
 	// Hashear la contraseña antes de almacenarla
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Println("Error hashing password:", err)
+		log.Println("error hashing password:", err)
 		return err
 	}
 	user.Password = string(hashedPassword)
 
 	_, err = collection.InsertOne(context.Background(), user)
 	if err != nil {
-		log.Println("Error creating user:", err)
+		log.Println("error creating user:", err)
 		return err
 	}
 
