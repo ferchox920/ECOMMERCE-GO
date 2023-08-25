@@ -25,7 +25,6 @@ func NewUserService(client *mongo.Client) *UserService {
 func (userService *UserService) CreateUser(user *models.User) error {
 	collection := userService.DB.Database("ecommerce-go").Collection("users")
 
-
 	if err := validateEmailFormat(user.Email); err != nil {
 		return err
 	}
@@ -78,15 +77,45 @@ func (userService *UserService) FindAllUsers() ([]models.User, error) {
 }
 
 func (userService *UserService) FindUserByID(id string) (*models.User, error) {
-    collection := userService.DB.Database("ecommerce-go").Collection("users")
-    user := &models.User{}
-    err := collection.FindOne(context.Background(), bson.M{"id": id}).Decode(user)
-    if err != nil {
-        log.Println("error finding user:", err)
-        return nil, err
-    }
-    return user, nil
+	collection := userService.DB.Database("ecommerce-go").Collection("users")
+	user := &models.User{}
+	err := collection.FindOne(context.Background(), bson.M{"id": id}).Decode(user)
+	if err != nil {
+		log.Println("error finding user:", err)
+		return nil, err
+	}
+	return user, nil
 }
+
+func (userService *UserService) UpdateUser(user *models.User) error {
+	collection := userService.DB.Database("ecommerce-go").Collection("users")
+
+	// Validar que el Email tenga formato de correo electrónico
+	if err := validateEmailFormat(user.Email); err != nil {
+		return err
+	}
+
+	// Actualizar todas las propiedades excepto email y password
+	updateFields := bson.M{
+		"name":     user.Name,
+		"lastname": user.Lastname,
+		"adress":   user.Adress,
+		"adress2":  user.Adress2,
+		"city":     user.City,
+		"state":    user.State,
+		"zip":      user.Zip,
+		"phone":    user.Phone,
+	}
+
+	_, err := collection.UpdateOne(context.Background(), bson.M{"id": user.ID}, bson.M{"$set": updateFields})
+	if err != nil {
+		log.Println("error updating user:", err)
+		return err
+	}
+
+	return nil
+}
+
 
 func validateEmailFormat(email string) error {
 	emailPattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$`
