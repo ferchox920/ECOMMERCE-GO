@@ -3,14 +3,13 @@ package services
 import (
 	"context"
 	"errors"
-	"log"
-	"regexp"
-
 	"github.com/ferchox920/ecommerce-go/models"
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
+	"log"
+	"regexp"
 )
 
 type UserService struct {
@@ -26,12 +25,11 @@ func NewUserService(client *mongo.Client) *UserService {
 func (userService *UserService) CreateUser(user *models.User) error {
 	collection := userService.DB.Database("ecommerce-go").Collection("users")
 
-	// Validar que el Email tenga formato de correo electrónico
+
 	if err := validateEmailFormat(user.Email); err != nil {
 		return err
 	}
 
-	// Verificar si el email ya está registrado
 	existingUser := &models.User{}
 	err := collection.FindOne(context.Background(), bson.M{"email": user.Email}).Decode(existingUser)
 	if err == nil {
@@ -44,7 +42,6 @@ func (userService *UserService) CreateUser(user *models.User) error {
 	id := uuid.New().String()
 	user.ID = id
 
-	// Hashear la contraseña antes de almacenarla
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Println("error hashing password:", err)
@@ -59,6 +56,36 @@ func (userService *UserService) CreateUser(user *models.User) error {
 	}
 
 	return nil
+}
+
+func (userService *UserService) FindAllUsers() ([]models.User, error) {
+	collection := userService.DB.Database("ecommerce-go").Collection("users")
+
+	cursor, err := collection.Find(context.Background(), bson.M{})
+	if err != nil {
+		log.Println("error finding users:", err)
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	var users []models.User
+	if err := cursor.All(context.Background(), &users); err != nil {
+		log.Println("error decoding users:", err)
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func (userService *UserService) FindUserByID(id string) (*models.User, error) {
+    collection := userService.DB.Database("ecommerce-go").Collection("users")
+    user := &models.User{}
+    err := collection.FindOne(context.Background(), bson.M{"id": id}).Decode(user)
+    if err != nil {
+        log.Println("error finding user:", err)
+        return nil, err
+    }
+    return user, nil
 }
 
 func validateEmailFormat(email string) error {
