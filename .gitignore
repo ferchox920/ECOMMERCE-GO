@@ -1,0 +1,43 @@
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Folders
+_obj
+_test
+_testmain.go
+tmp/
+
+# Files
+*.test
+*.prof
+*.exe
+*.pem
+*.log
+
+# Air binary
+.air.toml
+
+# Go specific
+bin/
+*.db
+*.test
+*.out
+*.trace
+
+# Ignore Mac .DS_Store
+.DS_Store
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore Go modules
+vendor/
+go.sum
+
+# Ignore build folder (if used)
+build/
+
+# Ignore dependencies folder (if used)
+deps/
