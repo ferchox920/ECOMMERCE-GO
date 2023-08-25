@@ -3,7 +3,7 @@
 package routes
 
 import (
-	services "github.com/ferchox920/ecommerce-go/service"
+	services "github.com/ferchox920/ecommerce-go/services"
 	"github.com/gofiber/fiber/v2"
 )
 
