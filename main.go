@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"log"
-	"github.com/gofiber/fiber/v2"
+
 	"github.com/ferchox920/ecommerce-go/database"
 	"github.com/ferchox920/ecommerce-go/routes"
-	"github.com/ferchox920/ecommerce-go/services"
+	"github.com/ferchox920/ecommerce-go/service"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {

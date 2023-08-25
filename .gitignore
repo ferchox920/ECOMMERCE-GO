@@ -31,7 +31,7 @@ bin/
 
 # Ignore VS Code settings
 .vscode/
-
+.env
 # Ignore Go modules
 vendor/
 go.sum

@@ -2,8 +2,9 @@ package routes
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/ferchox920/ecommerce-go/services"
+
 	"github.com/ferchox920/ecommerce-go/models"
+	"github.com/ferchox920/ecommerce-go/service"
 )
 
 func SetupRoutes(app *fiber.App, userService *services.UserService) {

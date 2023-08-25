@@ -21,11 +21,13 @@ func NewUserService(client *mongo.Client) *UserService {
 func (userService *UserService) CreateUser(user *models.User) error {
 	collection := userService.DB.Database("ecommerce-go").Collection("users")
 	_, err := collection.InsertOne(context.Background(), user)
+	log.Println("================")
+	log.Println("Inserting user:", user.Password)
+	log.Println("================")
 	if err != nil {
 		log.Println("Error creating user:", err)
 		return err
 	}
-	log.Println("Inserted user:", user)
 	return nil
 }
 
